@@ -16,7 +16,6 @@ const bitcoin = require('bitcoin');
 
 let Regex = require('regex'),
   config = require('config'),
-  spamchannels = config.get('moderation').botspamchannels;
 let walletConfig = config.get('ltc').config;
 let paytxfee = config.get('ltc').paytxfee;
 const ltc = new bitcoin.Client(walletConfig);

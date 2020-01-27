@@ -64,3 +64,11 @@ typings/
 .env
 bot/.DS_Store
 .DS_Store
+
+.vs/ProjectSettings.json
+
+.vs/slnx.sqlite
+
+.vs/TipBot/config/applicationhost.config
+
+.vs/TipBot/v16/.suo
