@@ -5,6 +5,8 @@ const Discord = require('discord.js');
 let moment = require('moment-timezone');
 // Load config!
 let config = require('config');
+let logChannel = config.get('moderation').logchannel;
+let pm2Name = config.get('moderation').pm2Name;
 config = config.get('bot');
 
 var aliases;
@@ -14,12 +16,12 @@ try {
     .tz('America/Los_Angeles')
     .format('MM-DD-YYYY hh:mm a');
   aliases = require('./alias.json');
-  console.log('[' + time + ' PST][' + '] ' + Object.keys(aliases).length + ' aliases Loaded!');
+  console.log('[' + time + ' PST][' + pm2Name + '] ' + Object.keys(aliases).length + ' aliases Loaded!');
 } catch (e) {
   var time = moment()
     .tz('America/Los_Angeles')
     .format('MM-DD-YYYY hh:mm a');
-  console.log('[' + time + ' PST][' + '] No aliases defined');
+  console.log('[' + time + ' PST][' + pm2Name + '] No aliases defined');
 }
 var commands = {};
 
@@ -33,6 +35,8 @@ bot.on('ready', function() {
     '[' +
       time +
       ' PST][' +
+      pm2Name +
+      '] ' +
       bot.user.username +
       'Logged in! Serving in ' +
       bot.guilds.array().length +
@@ -44,6 +48,8 @@ bot.on('ready', function() {
       '[' +
         time +
         ' PST][' +
+        pm2Name +
+        '] ' +
         bot.user.username +
         'Logged in! Serving in ' +
         bot.guilds.array().length +
@@ -54,6 +60,8 @@ bot.on('ready', function() {
     '[' +
       time +
       ' PST][' +
+      pm2Name +
+      '] type ' +
       config.prefix +
       'tiphelp in Discord for a commands list.'
   );
@@ -63,6 +71,8 @@ bot.on('ready', function() {
       '[' +
         time +
         ' PST][' +
+        pm2Name +
+        '] type ' +
         config.prefix +
         'tiphelp in Discord for a commands list.'
     );
@@ -84,10 +94,10 @@ process.on('uncaughtException', err => {
   var time = moment()
     .tz('America/Los_Angeles')
     .format('MM-DD-YYYY hh:mm a');
-  console.log('[' + time + ' PST][' + '] uncaughtException: ' + err);
+  console.log('[' + time + ' PST][' + pm2Name + '] uncaughtException: ' + err);
   bot.channels
     .get(logChannel)
-    .send('[' + time + ' PST][' + '] uncaughtException: ' + err);
+    .send('[' + time + ' PST][' + pm2Name + '] uncaughtException: ' + err);
   process.exit(1); //exit node.js with an error
 });
 
@@ -95,10 +105,10 @@ process.on('unhandledRejection', err => {
   var time = moment()
     .tz('America/Los_Angeles')
     .format('MM-DD-YYYY hh:mm a');
-  console.log('[' + time + ' PST][' + '] unhandledRejection: ' + err);
+  console.log('[' + time + ' PST][' + pm2Name + '] unhandledRejection: ' + err);
   bot.channels
     .get(logChannel)
-    .send('[' + time + ' PST][' + '] unhandledRejection: ' + err);
+    .send('[' + time + ' PST][' + pm2Name + '] unhandledRejection: ' + err);
   process.exit(1); //exit node.js with an error
 });
 
@@ -106,7 +116,7 @@ bot.on('disconnected', function() {
   var time = moment()
     .tz('America/Los_Angeles')
     .format('MM-DD-YYYY hh:mm a');
-  console.log('[' + time + ' PST][' + '] Disconnected!');
+  console.log('[' + time + ' PST][' + pm2Name + '] Disconnected!');
   process.exit(1); //exit node.js with an error
 });
 
@@ -114,7 +124,7 @@ bot.on('error', function(error) {
   var time = moment()
     .tz('America/Los_Angeles')
     .format('MM-DD-YYYY hh:mm a');
-  console.log('[' + time + ' PST][' + '] error: ' + error);
+  console.log('[' + time + ' PST][' + pm2Name + '] error: ' + error);
   process.exit(1); //exit node.js with an error
 });
 
@@ -187,7 +197,7 @@ function checkMessageForCommand(msg, isEdit) {
           .format('MM-DD-YYYY hh:mm a');
         bot.channels
           .get(logChannel)
-          .send('[' + time + ' PST][' + '] ' + msgTxt + linebreak);
+          .send('[' + time + ' PST][' + pm2Name + '] ' + msgTxt + linebreak);
       }
     }
   } else {
@@ -213,10 +223,10 @@ exports.addCommand = function(commandName, commandObject) {
     var time = moment()
       .tz('America/Los_Angeles')
       .format('MM-DD-YYYY hh:mm a');
-    console.log('[' + time + ' PST][' + '] Error addCommand: ' + err);
+    console.log('[' + time + ' PST][' + pm2Name + '] Error addCommand: ' + err);
     bot.channels
       .get(logChannel)
-      .send('[' + time + ' PST][' + '] Error addCommand: ' + err);
+      .send('[' + time + ' PST][' + pm2Name + '] Error addCommand: ' + err);
   }
 };
 exports.addCustomFunc = function(customFunc) {
@@ -227,11 +237,11 @@ exports.addCustomFunc = function(customFunc) {
       .tz('America/Los_Angeles')
       .format('MM-DD-YYYY hh:mm a');
     console.log(
-      '[' + time + ' PST][' + '] Error addCustomFunc: ' + err
+      '[' + time + ' PST][' + pm2Name + '] Error addCustomFunc: ' + err
     );
     bot.channels
       .get(logChannel)
-      .send('[' + time + ' PST][' + '] Error addCustomFunc: ' + err);
+      .send('[' + time + ' PST][' + pm2Name + '] Error addCustomFunc: ' + err);
   }
 };
 exports.commandCount = function() {

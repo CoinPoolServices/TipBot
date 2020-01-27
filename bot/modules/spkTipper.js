@@ -3,7 +3,8 @@
 const bitcoin = require('bitcoin');
 
 let Regex = require('regex'),
-    config = require('config');
+  config = require('config'),
+  spamchannels = config.get('moderation').botspamchannels;
 let walletConfig = config.get('spk').config;
 let paytxfee = config.get('spk').paytxfee;
 const spk = new bitcoin.Client(walletConfig);

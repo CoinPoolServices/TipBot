@@ -4,6 +4,7 @@ const bitcoin = require('bitcoin');
 
 let Regex = require('regex'),
   config = require('config'),
+  spamchannels = config.get('moderation').botspamchannels;
 let walletConfig = config.get('ftc').config;
 let paytxfee = config.get('ftc').paytxfee;
 const ftc = new bitcoin.Client(walletConfig);
