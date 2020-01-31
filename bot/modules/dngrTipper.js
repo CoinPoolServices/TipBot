@@ -5,17 +5,17 @@ const bitcoin = require('bitcoin');
 let Regex = require('regex'),
   config = require('config'),
   spamchannels = config.get('moderation').botspamchannels;
-let walletConfig = config.get('pxc').config;
-let paytxfee = config.get('pxc').paytxfee;
-const pxc = new bitcoin.Client(walletConfig);
+let walletConfig = config.get('dngr').config;
+let paytxfee = config.get('dngr').paytxfee;
+const dngr = new bitcoin.Client(walletConfig);
 
-exports.commands = ['tippxc'];
-exports.tippxc = {
+exports.commands = ['tipdngr'];
+exports.tipdngr = {
   usage: '<subcommand>',
   description:
-    '__**Phoenixcoin (PXC) Tipper**__\nTransaction Fees: **' + paytxfee + '**\n    **!tippxc** : Displays This Message\n    **!tippxc balance** : get your balance\n    **!tippxc deposit** : get address for your deposits\n    **!tippxc withdraw <ADDRESS> <AMOUNT>** : withdraw coins to specified address\n    **!tippxc <@user> <amount>** :mention a user with @ and then the amount to tip them\n    **!tippxc private <user> <amount>** : put private before Mentioning a user to tip them privately.\n\n    has a default txfee of ' + paytxfee,
+    '__**DangerCoin (DNGR) Tipper**__\nTransaction Fees: **' + paytxfee + '**\n    **$tipdngr** : Displays This Message\n    **$tipdngr balance** : get your balance\n    **$tipdngr deposit** : get address for your deposits\n    **$tipdngr withdraw <ADDRESS> <AMOUNT>** : withdraw coins to specified address\n    **$tipdngr <@user> <amount>** :mention a user with @ and then the amount to tip them\n    **$tipdngr private <user> <amount>** : put private before Mentioning a user to tip them privately.\n\n    has a default txfee of ' + paytxfee,
   process: async function(bot, msg, suffix) {
-    let tipper = msg.author.id.replace('!', ''),
+    let tipper = msg.author.id.replace('$', ''),
       words = msg.content
         .trim()
         .split(' ')
@@ -24,7 +24,7 @@ exports.tippxc = {
         }),
       subcommand = words.length >= 2 ? words[1] : 'help',
       helpmsg =
-        '__**Phoenixcoin (PXC) Tipper**__\nTransaction Fees: **' + paytxfee + '**\n    **!tippxc** : Displays This Message\n    **!tippxc balance** : get your balance\n    **!tippxc deposit** : get address for your deposits\n    **!tippxc withdraw <ADDRESS> <AMOUNT>** : withdraw coins to specified address\n    **!tippxc <@user> <amount>** :mention a user with @ and then the amount to tip them\n    **!tippxc private <user> <amount>** : put private before Mentioning a user to tip them privately.\n\n    **<> : Replace with appropriate value.**',
+        '__**DangerCoin (DNGR) Tipper**__\nTransaction Fees: **' + paytxfee + '**\n    **$tipdngr** : Displays This Message\n    **$tipdngr balance** : get your balance\n    **$tipdngr deposit** : get address for your deposits\n    **$tipdngr withdraw <ADDRESS> <AMOUNT>** : withdraw coins to specified address\n    **$tipdngr <@user> <amount>** :mention a user with @ and then the amount to tip them\n    **$tipdngr private <user> <amount>** : put private before Mentioning a user to tip them privately.\n\n    **<> : Replace with appropriate value.**',
       channelwarning = 'Please use <#bot-spam> or DMs to talk to bots.';
     switch (subcommand) {
       case 'help':
@@ -58,12 +58,12 @@ function doHelp(message, helpmsg) {
 }
 
 function doBalance(message, tipper) {
-  pxc.getBalance(tipper, 1, function(err, balance) {
+  dngr.getBalance(tipper, 1, function(err, balance) {
     if (err) {
-      message.reply('Error getting Phoenixcoin (PXC) balance.').then(message => message.delete(10000));
+      message.reply('Error getting DangerCoin (DNGR) balance.').then(message => message.delete(10000));
     } else {
     message.channel.send({ embed: {
-    description: '**:bank::money_with_wings::moneybag:Phoenixcoin (PXC) Balance!:moneybag::money_with_wings::bank:**',
+    description: '**:bank::money_with_wings::moneybag:DangerCoin (DNGR) Balance!:moneybag::money_with_wings::bank:**',
     color: 1363892,
     fields: [
       {
@@ -85,10 +85,10 @@ function doBalance(message, tipper) {
 function doDeposit(message, tipper) {
   getAddress(tipper, function(err, address) {
     if (err) {
-      message.reply('Error getting your Phoenixcoin (PXC) deposit address.').then(message => message.delete(10000));
+      message.reply('Error getting your DangerCoin (DNGR) deposit address.').then(message => message.delete(10000));
     } else {
     message.channel.send({ embed: {
-    description: '**:bank::card_index::moneybag:Phoenixcoin (PXC) Address!:moneybag::card_index::bank:**',
+    description: '**:bank::card_index::moneybag:DangerCoin (DNGR) Address!:moneybag::card_index::bank:**',
     color: 1363892,
     fields: [
       {
@@ -117,24 +117,24 @@ function doWithdraw(message, tipper, words, helpmsg) {
     amount = getValidatedAmount(words[3]);
 
   if (amount === null) {
-    message.reply("I don't know how to withdraw that much Phoenixcoin (PXC)...").then(message => message.delete(10000));
+    message.reply("I don't know how to withdraw that much DangerCoin (DNGR)...").then(message => message.delete(10000));
     return;
   }
 
-  pxc.getBalance(tipper, 1, function(err, balance) {
+  dngr.getBalance(tipper, 1, function(err, balance) {
     if (err) {
-      message.reply('Error getting Phoenixcoin (PXC) balance.').then(message => message.delete(10000));
+      message.reply('Error getting DangerCoin (DNGR) balance.').then(message => message.delete(10000));
     } else {
       if (Number(amount) + Number(paytxfee) > Number(balance)) {
-        message.channel.send('Please leave atleast ' + paytxfee + ' Phoenixcoin (PXC) for transaction fees!');
+        message.channel.send('Please leave atleast ' + paytxfee + ' DangerCoin (DNGR) for transaction fees!');
         return;
       }
-      pxc.sendFrom(tipper, address, Number(amount), function(err, txId) {
+      dngr.sendFrom(tipper, address, Number(amount), function(err, txId) {
         if (err) {
           message.reply(err.message).then(message => message.delete(10000));
         } else {
         message.channel.send({embed:{
-        description: '**:outbox_tray::money_with_wings::moneybag:Phoenixcoin (PXC) Transaction Completed!:moneybag::money_with_wings::outbox_tray:**',
+        description: '**:outbox_tray::money_with_wings::moneybag:DangerCoin (DNGR) Transaction Completed!:moneybag::money_with_wings::outbox_tray:**',
         color: 1363892,
         fields: [
           {
@@ -185,16 +185,16 @@ function doTip(bot, message, tipper, words, helpmsg) {
   let amount = getValidatedAmount(words[amountOffset]);
 
   if (amount === null) {
-    message.reply("I don't know how to tip that much Phoenixcoin (PXC)...").then(message => message.delete(10000));
+    message.reply("I don't know how to tip that much DangerCoin (DNGR)...").then(message => message.delete(10000));
     return;
   }
 
-  pxc.getBalance(tipper, 1, function(err, balance) {
+  dngr.getBalance(tipper, 1, function(err, balance) {
     if (err) {
-      message.reply('Error getting Phoenixcoin (PXC) balance.').then(message => message.delete(10000));
+      message.reply('Error getting DangerCoin (DNGR) balance.').then(message => message.delete(10000));
     } else {
       if (Number(amount) + Number(paytxfee) > Number(balance)) {
-        message.channel.send('Please leave atleast ' + paytxfee + ' Phoenixcoin (PXC) for transaction fees!');
+        message.channel.send('Please leave atleast ' + paytxfee + ' DangerCoin (DNGR) for transaction fees!');
         return;
       }
 
@@ -205,7 +205,7 @@ function doTip(bot, message, tipper, words, helpmsg) {
             return;
           }
       if (message.mentions.users.first().id) {
-        sendPXC(bot, message, tipper, message.mentions.users.first().id.replace('!', ''), amount, prv);
+        sendDOGE(bot, message, tipper, message.mentions.users.first().id.replace('$', ''), amount, prv);
       } else {
         message.reply('Sorry, I could not find a user in your tip...').then(message => message.delete(10000));
       }
@@ -213,19 +213,19 @@ function doTip(bot, message, tipper, words, helpmsg) {
   });
 }
 
-function sendPXC(bot, message, tipper, recipient, amount, privacyFlag) {
+function sendDOGE(bot, message, tipper, recipient, amount, privacyFlag) {
   getAddress(recipient.toString(), function(err, address) {
     if (err) {
       message.reply(err.message).then(message => message.delete(10000));
     } else {
-          pxc.sendFrom(tipper, address, Number(amount), 1, null, null, function(err, txId) {
+          dngr.sendFrom(tipper, address, Number(amount), 1, null, null, function(err, txId) {
               if (err) {
                 message.reply(err.message).then(message => message.delete(10000));
               } else {
                 if (privacyFlag) {
                   let userProfile = message.guild.members.find('id', recipient);
                   userProfile.user.send({ embed: {
-                  description: '**:money_with_wings::moneybag:Phoenixcoin (PXC) Transaction Completed!:moneybag::money_with_wings:**',
+                  description: '**:money_with_wings::moneybag:DangerCoin (DNGR) Transaction Completed!:moneybag::money_with_wings:**',
                   color: 1363892,
                   fields: [
                     {
@@ -256,7 +256,7 @@ function sendPXC(bot, message, tipper, recipient, amount, privacyFlag) {
                   ]
                 } });
                 message.author.send({ embed: {
-                description: '**:money_with_wings::moneybag:Phoenixcoin (PXC) Transaction Completed!:moneybag::money_with_wings:**',
+                description: '**:money_with_wings::moneybag:DangerCoin (DNGR) Transaction Completed!:moneybag::money_with_wings:**',
                 color: 1363892,
                 fields: [
                   {
@@ -288,13 +288,13 @@ function sendPXC(bot, message, tipper, recipient, amount, privacyFlag) {
                 ]
               } });
                   if (
-                    message.content.startsWith('!tippxc private ')
+                    message.content.startsWith('$tipdngr private ')
                   ) {
                     message.delete(1000); //Supposed to delete message
                   }
                 } else {
                   message.channel.send({ embed: {
-                  description: '**:money_with_wings::moneybag:Phoenixcoin (PXC) Transaction Completed!:moneybag::money_with_wings:**',
+                  description: '**:money_with_wings::moneybag:DangerCoin (DNGR) Transaction Completed!:moneybag::money_with_wings:**',
                   color: 1363892,
                   fields: [
                     {
@@ -332,13 +332,13 @@ function sendPXC(bot, message, tipper, recipient, amount, privacyFlag) {
 }
 
 function getAddress(userId, cb) {
-  pxc.getAddressesByAccount(userId, function(err, addresses) {
+  dngr.getAddressesByAccount(userId, function(err, addresses) {
     if (err) {
       cb(err);
     } else if (addresses.length > 0) {
       cb(null, addresses[0]);
     } else {
-      pxc.getNewAddress(userId, function(err, address) {
+      dngr.getNewAddress(userId, function(err, address) {
         if (err) {
           cb(err);
         } else {
@@ -364,16 +364,16 @@ function isSpam(msg) {
 
 function getValidatedAmount(amount) {
   amount = amount.trim();
-  if (amount.toLowerCase().endsWith('pxc')) {
+  if (amount.toLowerCase().endsWith('dngr')) {
     amount = amount.substring(0, amount.length - 3);
   }
   return amount.match(/^[0-9]+(\.[0-9]+)?$/) ? amount : null;
 }
 
 function txLink(txId) {
-  return 'http://explorer.phoenixcoin.org/tx/' + txId;
+  return 'https://dogechain.info/tx/' + txId;
 }
 
 function addyLink(address) {
-  return 'http://explorer.phoenixcoin.org/address/' + address;
+  return 'https://dogechain.info/address/' + address;
 }
