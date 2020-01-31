@@ -2,7 +2,7 @@
   // Bot configuration
   "bot": {
       "token":"Bot-Token",
-      "prefix": "!",
+      "prefix": "$",
       "debug": true
   },
   "dngr": {
