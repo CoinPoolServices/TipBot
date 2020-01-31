@@ -74,3 +74,7 @@ bot/.DS_Store
 .vs/TipBot/v16/.suo
 
 .vs/VSWorkspaceState.json
+
+.vs/config/applicationhost.config
+
+.vs/TipBot/v15/.suo

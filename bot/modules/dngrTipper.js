@@ -205,7 +205,7 @@ function doTip(bot, message, tipper, words, helpmsg) {
             return;
           }
       if (message.mentions.users.first().id) {
-        sendDOGE(bot, message, tipper, message.mentions.users.first().id.replace('$', ''), amount, prv);
+        sendDNGR(bot, message, tipper, message.mentions.users.first().id.replace('$', ''), amount, prv);
       } else {
         message.reply('Sorry, I could not find a user in your tip...').then(message => message.delete(10000));
       }
@@ -213,7 +213,7 @@ function doTip(bot, message, tipper, words, helpmsg) {
   });
 }
 
-function sendDOGE(bot, message, tipper, recipient, amount, privacyFlag) {
+function sendDNGR(bot, message, tipper, recipient, amount, privacyFlag) {
   getAddress(recipient.toString(), function(err, address) {
     if (err) {
       message.reply(err.message).then(message => message.delete(10000));
