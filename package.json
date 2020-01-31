@@ -20,7 +20,7 @@
   "scripts": {
     "precommit": "prettier --single-quote true --write bot/**/*.js",
     "rebuild": "git pull origin master && npm install && update all",
-    "start":  "pm2 start ecosystem.config.js"
+    "start": "pm2 start ecosystem.config.js"
   },
   "devDependencies": {
     "prettier": "1.7.4"
@@ -29,7 +29,7 @@
   "version": "1.0.0",
   "description": "Crypto coin tipbot for Discord",
   "main": "bot/bot.js",
-  "repository": "https://github.com/MSFTserver/TipBot",
-  "author": "MSFTserver <MSFTserver@gmail.com>",
+  "repository": "https://github.com/CoinPoolServices/TipBot",
+  "author": "Coin Pool Services <nexusnow@protonmail.com>",
   "license": "MIT"
 }

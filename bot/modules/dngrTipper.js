@@ -213,6 +213,162 @@ function doTip(bot, message, tipper, words, helpmsg) {
   });
 }
 
+function doRoleTip(bot, message, tipper, words, helpmsg, MultiorRole) {
+    if (!words || words.length < 3) {
+        doHelp(message, helpmsg);
+        return;
+    }
+    let isPrivateTip = words.length >= 4 && words[1] === 'private';
+    let amountOffset = isPrivateTip ? 3 : 2;
+
+    let amount = getValidatedAmount(words[amountOffset]);
+    if (amount === null) {
+        message.reply("I don't know how to tip that amount of DNGR...").then(message => message.delete(10000));
+        return;
+    }
+
+    let roleToTip = message.mentions.roles.first();
+    if (roleToTip !== null) {
+        let membersOfRole = roleToTip.members.keyArray();
+        if (membersOfRole.length > 0) {
+            let userIDs = membersOfRole.map(member => member.replace('!', ''));
+            userIDs.forEach(u => {
+                sendPLSE(bot, message, tipper, u, amount, isPrivateTip, MultiorRole);
+            });
+        } else {
+            return message.reply('Sorry, I could not find any users to tip in that role...').then(message => message.delete(10000));
+        }
+    } else {
+        return message.reply('Sorry, I could not find any roles in your tip...').then(message => message.delete(10000));
+    }
+}
+
+
+
+function sendRoleDNGR(bot, message, tipper, recipients, amount, privacyFlag) {
+    getAddress(recipients, function (err, address) {
+        if (err) {
+            message.reply(err.message).then(message => message.delete(10000));
+        } else {
+            dngr.sendFrom(tipper, address, Number(amount), 1, null, null, function (err, txId) {
+                if (err) {
+                    message.reply(err.message).then(message => message.delete(10000));
+                } else {
+                    if (privacyFlag) {
+                        let userProfile = message.mentions.roles.first('id', recipients);
+                        userProfile.user.send({
+                            embed: {
+                                description: '**:money_with_wings::moneybag:DangerCoin (DNGR) Transaction Completed!:moneybag::money_with_wings:**',
+                                color: 1363892,
+                                fields: [
+                                    {
+                                        name: '__Sender__',
+                                        value: 'Private Tipper',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__Receivers__',
+                                        value: '<@' + recipients + '>',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__txid__',
+                                        value: '**' + txId + '**\n' + txLink(txId),
+                                        inline: false
+                                    },
+                                    {
+                                        name: '__Amount__',
+                                        value: '**' + amount.toString() + '**',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__Fee__',
+                                        value: '**' + paytxfee.toString() + '**',
+                                        inline: true
+                                    }
+                                ]
+                            }
+                        });
+                        message.author.send({
+                            embed: {
+                                description: '**:money_with_wings::moneybag:DangerCoin (DNGR) Transaction Completed!:moneybag::money_with_wings:**',
+                                color: 1363892,
+                                fields: [
+                                    {
+                                        name: '__Sender__',
+                                        value: '<@' + message.author.id + '>',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__Receivers__',
+                                        value: '<@' + recipients + '>',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__txid__',
+                                        value: '**' + txId + '**\n' + txLink(txId),
+                                        inline: false
+                                    },
+                                    {
+                                        name: '__Amount__',
+                                        value: '**' + amount.toString() + '**',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__Fee__',
+                                        value: '**' + paytxfee.toString() + '**',
+                                        inline: true
+                                    }
+
+                                ]
+                            }
+                        });
+                        if (
+                            message.content.startsWith('$tipdngr private ')
+                        ) {
+                            message.delete(1000); //Supposed to delete message
+                        }
+                    } else {
+                        message.channel.send({
+                            embed: {
+                                description: '**:money_with_wings::moneybag:DangerCoin (DNGR) Transaction Completed!:moneybag::money_with_wings:**',
+                                color: 1363892,
+                                fields: [
+                                    {
+                                        name: '__Sender__',
+                                        value: '<@' + message.author.id + '>',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__Receivers__',
+                                        value: '<@' + recipients + '>',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__txid__',
+                                        value: '**' + txId + '**\n' + txLink(txId),
+                                        inline: false
+                                    },
+                                    {
+                                        name: '__Amount__',
+                                        value: '**' + amount.toString() + '**',
+                                        inline: true
+                                    },
+                                    {
+                                        name: '__Fee__',
+                                        value: '**' + paytxfee.toString() + '**',
+                                        inline: true
+                                    }
+                                ]
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+
 function sendDNGR(bot, message, tipper, recipient, amount, privacyFlag) {
   getAddress(recipient.toString(), function(err, address) {
     if (err) {
