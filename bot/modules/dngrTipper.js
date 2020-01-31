@@ -371,9 +371,9 @@ function getValidatedAmount(amount) {
 }
 
 function txLink(txId) {
-  return 'https://dogechain.info/tx/' + txId;
+    return 'http://dngrexplorer.cf/tx/' + txId;
 }
 
 function addyLink(address) {
-  return 'https://dogechain.info/address/' + address;
+    return 'http://dngrexplorer.cf/address/' + address;
 }
