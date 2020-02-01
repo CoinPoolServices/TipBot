@@ -9,7 +9,7 @@ let walletConfig = config.get('dngr').config;
 let paytxfee = config.get('dngr').paytxfee;
 const dngr = new bitcoin.Client(walletConfig);
 
-exports.commands = ['tipdngr'];
+exports.commands = ['tipdngr, tiprain'];
 exports.tipdngr = {
   usage: '<subcommand>',
   description:
@@ -43,6 +43,31 @@ exports.tipdngr = {
             doTip(bot, msg, tipper, words, helpmsg);
     }
   }
+};
+
+exports.rain = {
+    usage: '<subcommand>',
+    description: 'Tip all users in a specified role an amount of DNGR.',
+    process: async function (bot, msg, suffix) {
+        let tipper = msg.author.id.replace('!', ''),
+            words = msg.content
+                .trim()
+                .split(' ')
+                .filter(function (n) {
+                    return n !== '';
+                }),
+            subcommand = words.length >= 2 ? words[1] : 'help',
+            channelwarning = `Please use <#${spamchannel}> or DMs to talk to bots.`,
+            MultiorRole = true;
+        switch (subcommand) {
+            case 'help':
+                privateorSpamChannel(msg, channelwarning, doHelp, [helpmsg]);
+                break;
+            default:
+                doRoleTip(bot, msg, tipper, words, helpmsg);
+                break;
+        }
+    }
 };
 
 function privateorSpamChannel(message, wrongchannelmsg, fn, args) {
