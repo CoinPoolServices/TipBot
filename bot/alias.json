@@ -1,5 +1,6 @@
 {
-"dngrtip":"tipdngr",
-"tip":"tiphelp",
-"tip help":"tiphelp"
+  "dngrtip": "tipdngr",
+  "dngrrain": "tipraindngr",
+  "tip": "tiphelp",
+  "tip help": "tiphelp"
 }
